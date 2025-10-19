@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.EDDASTORE" parent="Theme.Material3.DayNight">
+        <!-- Oculta la ActionBar/título a nivel de ventana (para Compose) -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- Opcional: color transparente para status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>
