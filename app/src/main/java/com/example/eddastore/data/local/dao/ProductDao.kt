@@ -31,4 +31,8 @@ interface ProductDao {
 
     @Query("SELECT * FROM product WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): ProductEntity?
+
+    @Query("SELECT stock FROM product WHERE id=:id") suspend fun getStock(id: Long): Int?
+    @Query("UPDATE product SET stock = stock - :qty WHERE id=:id AND stock >= :qty")
+    suspend fun decrementStock(id: Long, qty: Int)
 }

@@ -1,6 +1,8 @@
 package com.example.eddastore
 
 object Routes {
+
+    const val AUTH = "auth_gate"
     const val Splash = "splash"
     const val Welcome = "welcome"
     const val Login = "login"
@@ -14,6 +16,5 @@ object Routes {
     const val PRODUCT_FORM_WITH_ARG = "products/form?id={id}"
 
     const val CART = "cart"
-
-    const val AUTH = "auth_gate"
+    const val CHECKOUT = "checkout"
 }

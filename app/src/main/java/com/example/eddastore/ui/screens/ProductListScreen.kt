@@ -9,7 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha   // ← IMPORTANTE
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -21,6 +21,10 @@ import com.example.eddastore.ui.components.StoreTopBar
 import com.example.eddastore.ui.product.ProductViewModel
 import com.example.eddastore.ui.util.drawableIdFromName
 import com.example.eddastore.ui.util.sourceFromImageName
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
+import com.example.eddastore.ui.cart.CartViewModel
+import com.example.eddastore.data.local.AppDb
 
 @Composable
 fun ProductListScreen(
@@ -32,9 +36,15 @@ fun ProductListScreen(
     onGoNewProduct: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val cartVm: CartViewModel = viewModel(factory = CartViewModel.Factory(AppDb.get(ctx)))
+    val user = AuthState.currentUser.value
+    // Vincula el carrito al usuario logueado
+    LaunchedEffect(AuthState.currentUser.value?.id) {
+        AuthState.currentUser.value?.let { cartVm.initForUser(it.id) }
+    }
     val vm: ProductViewModel = viewModel(factory = ProductViewModel.provideFactory(ctx))
 
-    val user by AuthState.currentUser
+
     val isAdmin = user?.role == "admin"
     val userName = user?.fullName
 
@@ -115,7 +125,15 @@ fun ProductListScreen(
                                     onClick = { if (p.isActive) vm.deactivate(p) else vm.activate(p) }
                                 ) { Text(label) }
                             } else {
-                                Button(onClick = { onAddCart(p.id) }) { Text("Agregar") }
+                                Button(onClick = {
+                                    val u = AuthState.currentUser.value
+                                    if (u == null) {
+                                        onGoLogin()
+                                    } else {
+                                        cartVm.addProduct(p, u.id)
+                                        onGoCart()
+                                    }
+                                }) { Text("Agregar") }
                             }
                         }
                     }

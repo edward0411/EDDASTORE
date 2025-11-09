@@ -8,6 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eddastore.Routes
 import com.example.eddastore.ui.screens.*
 import com.example.eddastore.ui.product.ProductFormScreen
+import com.example.eddastore.ui.cart.CartScreen
+import com.example.eddastore.ui.cart.CheckoutScreen
 
 @Composable
 fun AppNavHost(
@@ -87,9 +89,22 @@ fun AppNavHost(
                 onCancel = { nav.popBackStack() }
             )
         }
-        // TODO
 
-        composable(Routes.CART) { /* ... */ }
+        composable(Routes.CART) {
+            CartScreen(
+                onBack = { nav.popBackStack() },
+                onCheckout = { nav.navigate(Routes.CHECKOUT) } // ✅
+            )
+        }
+
+        composable(Routes.CHECKOUT) {
+            CheckoutScreen(
+                onPayCard = { nav.popBackStack(Routes.CART, inclusive = true) },
+                onPayNequi = { nav.popBackStack(Routes.CART, inclusive = true) },
+                onBack = { nav.popBackStack() }
+            )
+        }
+        // TODO
         composable(Routes.AUTH) { /* ... */ }
         composable(Routes.Welcome) { WelcomeScreen(onLogin = { nav.navigate(Routes.Login) }) }
     }

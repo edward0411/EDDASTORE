@@ -1,4 +1,3 @@
-// com/example/eddastore/data/local/AppDb.kt
 package com.example.eddastore.data.local
 
 import android.content.Context
@@ -8,20 +7,35 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.eddastore.data.local.dao.ProductDao
 import com.example.eddastore.data.local.dao.UserDao
+import com.example.eddastore.data.local.dao.CartDao
+import com.example.eddastore.data.local.dao.OrderDao
 import com.example.eddastore.data.local.entity.ProductEntity
 import com.example.eddastore.data.local.entity.UserEntity
+import com.example.eddastore.data.local.entity.CartEntity
+import com.example.eddastore.data.local.entity.CartItemEntity
+import com.example.eddastore.data.local.entity.OrderEntity
+import com.example.eddastore.data.local.entity.OrderItemEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [UserEntity::class, ProductEntity::class],
-    version = 7,                         // ← sube la versión
+    entities = [
+        UserEntity::class,
+        ProductEntity::class,
+        CartEntity::class, CartItemEntity::class,
+        OrderEntity::class, OrderItemEntity::class
+    ],
+    version = 8,   // ← sube la versión
     exportSchema = false
 )
 abstract class AppDb : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun productDao(): ProductDao
+
+    abstract fun cartDao(): CartDao
+
+    abstract fun orderDao(): OrderDao
 
     companion object {
         @Volatile private var INSTANCE: AppDb? = null
