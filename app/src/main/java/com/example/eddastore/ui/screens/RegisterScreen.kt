@@ -1,50 +1,58 @@
 package com.example.eddastore.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.eddastore.ui.auth.AuthViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(onRegisterOk: () -> Unit, onBack: () -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+fun RegisterScreen(
+    prefillEmail: String? = null,
+    onRegisterOk: () -> Unit,
+    onBack: () -> Unit
+) {
+    val vm: AuthViewModel = viewModel()
+
+    var fullName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(prefillEmail ?: "") }
     var pass by remember { mutableStateOf("") }
-    var confirm by remember { mutableStateOf("") }
+    var pass2 by remember { mutableStateOf("") }
+    var msg by remember { mutableStateOf<String?>(null) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Registro de Clientes") },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, null) } }
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Text("Crear cuenta", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedTextField(value = fullName, onValueChange = { fullName = it }, label = { Text("Nombre completo") }, singleLine = true)
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Correo") }, singleLine = true)
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = pass, onValueChange = { pass = it }, label = { Text("Contraseña") }, singleLine = true)
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = pass2, onValueChange = { pass2 = it }, label = { Text("Confirmar contraseña") }, singleLine = true)
+
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = {
+            if (fullName.isBlank() || email.isBlank() || pass.isBlank()) {
+                msg = "Todos los campos son obligatorios."
+                return@Button
+            }
+            if (pass != pass2) {
+                msg = "Las contraseñas no coinciden."
+                return@Button
+            }
+            vm.register(fullName, email, pass,
+                onOk = onRegisterOk,
+                onError = { msg = it }
             )
-        }
-    ) { inner ->
-        Column(Modifier.padding(inner).padding(20.dp)) {
-            OutlinedTextField(name, { name = it }, label = { Text("Nombre completo") }, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(email, { email = it }, label = { Text("Correo electrónico") },
-                modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(pass, { pass = it }, label = { Text("Contraseña") },
-                modifier = Modifier.fillMaxWidth(), visualTransformation = PasswordVisualTransformation())
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(confirm, { confirm = it }, label = { Text("Confirmar contraseña") },
-                modifier = Modifier.fillMaxWidth(), visualTransformation = PasswordVisualTransformation())
+        }) { Text("Registrarme") }
 
-            Spacer(Modifier.height(20.dp))
-            Button(
-                onClick = onRegisterOk,
-                enabled = name.isNotBlank() && email.isNotBlank() && pass.length >= 6 && pass == confirm,
-                modifier = Modifier.fillMaxWidth()
-            ) { Text("Registrarme") }
-        }
+        msg?.let { Spacer(Modifier.height(12.dp)); Text(it, color = MaterialTheme.colorScheme.error) }
+        Spacer(Modifier.height(8.dp))
+        TextButton(onClick = onBack) { Text("Atrás") }
     }
 }

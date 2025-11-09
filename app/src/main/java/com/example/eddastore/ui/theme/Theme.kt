@@ -4,16 +4,26 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
-private val Brand = Color(0xFF1D3557)
-private val Accent = Color(0xFFE63946)
+private val LightColors = lightColorScheme(
+    primary = NavyBlue,
+    onPrimary = White,
+)
 
-private val Light = lightColorScheme(primary = Brand, secondary = Accent)
-private val Dark = darkColorScheme(primary = Brand, secondary = Accent)
+private val DarkColors = darkColorScheme(
+    primary = White,        // botones blancos en dark
+    onPrimary = NavyBlueDark
+)
 
 @Composable
-fun EDDATheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if (darkTheme) Dark else Light, content = content)
+fun EDDASTORETheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colorScheme = if (darkTheme) DarkColors else LightColors,
+        content = content
+    )
 }
